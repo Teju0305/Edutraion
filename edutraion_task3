@@ -1,0 +1,46 @@
+# 🌸 Iris Flower Classification - Google Colab Ready
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Upload the dataset
+from google.colab import files
+uploaded = files.upload()  # Upload 'Iris.csv' from Kaggle
+
+# Load dataset
+df = pd.read_csv('/content/IRIS.csv')
+
+# Drop Id column if exists
+if 'Id' in df.columns:
+    df = df.drop('Id', axis=1)
+
+# Encode species labels
+le = LabelEncoder()
+df['species'] = le.fit_transform(df['species'])
+
+# Features and target
+X = df.drop('species', axis=1)
+y = df['species']
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+# Predict
+y_pred = model.predict(X_test)
+
+# Evaluate
+acc = accuracy_score(y_test, y_pred)
+print(f"✅ Accuracy: {acc*100:.2f}%")
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
